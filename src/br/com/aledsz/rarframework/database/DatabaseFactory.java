@@ -10,9 +10,9 @@ import java.sql.SQLException;
  * @author aleDsz
  */
 public class DatabaseFactory {
-    
+
     private static DataContext _instanceOfDataContext = null;
-    
+
     public static DataContext getInstanceOfDataAccess() throws SQLException, IOException {
         try {
             return getInstanceOfDataAccess(null);
@@ -20,7 +20,7 @@ public class DatabaseFactory {
             throw ex;
         }
     }
-    
+
     public static DataContext getInstanceOfDataAccess(String databaseName) throws SQLException, IOException {
         try {
             if (_instanceOfDataContext == null) {

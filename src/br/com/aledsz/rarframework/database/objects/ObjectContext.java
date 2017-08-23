@@ -1,25 +1,28 @@
 package br.com.aledsz.rarframework.database.objects;
 
 import br.com.aledsz.rarframework.database.exceptions.RarFrameworkException;
-import java.lang.reflect.*;
 import java.lang.annotation.*;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @description Get all metadata from object
+ * @version 1.0.0.
  * @author aleDsz
  */
 public class ObjectContext<T> {
+
     private T object = null;
-    
+
     public ObjectContext(T Object) {
         object = Object;
     }
-    
-    public List<Property> getProperties(Boolean getNull) throws IllegalArgumentException {
+
+    public List<Property> getProperties(Boolean getNull) throws IllegalArgumentException, IllegalAccessException {
         try {
-            List<Property> allProps = new ArrayList<Property>();
-        
+            List<Property> allProps = new ArrayList<>();
+
             Field[] allFields = object.getClass().getDeclaredFields();
 
             for (Field field : allFields) {
@@ -46,18 +49,16 @@ public class ObjectContext<T> {
             }
 
             return allProps;
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException ex) {
             RarFrameworkException.LogError(ex);
         }
-        
+
         return null;
     }
-    
+
     public String getTable() throws IllegalArgumentException {
         try {
             String tableName = "";
-        
-            Field[] allFields = object.getClass().getDeclaredFields();
 
             Annotation[] annotations = object.getClass().getDeclaredAnnotations();
 
@@ -72,10 +73,10 @@ public class ObjectContext<T> {
             }
 
             return tableName;
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException ex) {
             RarFrameworkException.LogError(ex);
         }
-        
+
         return null;
     }
 }
