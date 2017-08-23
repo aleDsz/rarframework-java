@@ -2,6 +2,7 @@ package br.com.aledsz.rarframework.database.command;
 
 import br.com.aledsz.rarframework.database.DatabaseFactory;
 import br.com.aledsz.rarframework.database.data.DataContext;
+import br.com.aledsz.rarframework.database.exceptions.RarFrameworkException;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -19,7 +20,7 @@ public class CommandContext {
             setSql(null);
             dataContext = DatabaseFactory.getInstanceOfDataAccess();
         } catch (SQLException ex) {
-            throw ex;
+            RarFrameworkException.LogError(ex);
         }
     }
     
@@ -28,7 +29,7 @@ public class CommandContext {
             setSql(null);
             dataContext = DatabaseFactory.getInstanceOfDataAccess(databaseName);
         } catch (SQLException ex) {
-            throw ex;
+            RarFrameworkException.LogError(ex);
         }
     }
     
@@ -37,7 +38,7 @@ public class CommandContext {
             setSql(sSql);
             dataContext = DatabaseFactory.getInstanceOfDataAccess(databaseName);
         } catch (SQLException ex) {
-            throw ex;
+            RarFrameworkException.LogError(ex);
         }
     }
     
@@ -49,7 +50,7 @@ public class CommandContext {
         try {
             dataContext.executeQuery(command);
         } catch (SQLException ex) {
-            throw ex;
+            RarFrameworkException.LogError(ex);
         }
     }
     
@@ -57,7 +58,9 @@ public class CommandContext {
         try {
             return dataContext.executeReader(command);
         } catch (SQLException ex) {
-            throw ex;
+            RarFrameworkException.LogError(ex);
         }
+        
+        return null;
     }
 }
