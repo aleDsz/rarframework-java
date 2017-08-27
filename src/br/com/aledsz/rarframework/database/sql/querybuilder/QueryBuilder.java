@@ -11,14 +11,14 @@ import java.util.List;
  */
 public class QueryBuilder {
 
-    protected List<String> valueList = new ArrayList<>();
+    protected List<Object> valueList = new ArrayList<>();
     protected List<String> fieldList = new ArrayList<>();
     protected List<String> fromList = new ArrayList<>();
     protected List<String> whereList = new ArrayList<>();
     protected List<String> groupList = new ArrayList<>();
     protected List<String> orderList = new ArrayList<>();
 
-    public void addValue(String value) {
+    public void addValue(Object value) {
         try {
             valueList.add(value);
         } catch (Exception ex) {
@@ -71,7 +71,9 @@ public class QueryBuilder {
             return "null";
         }
 
-        switch (propValue.getClass().getTypeName().toLowerCase()) {
+        String propType = propValue.getClass().getName().toLowerCase().replaceAll("java.lang.", "");
+
+        switch (propType) {
             case "string":
                 return String.format("'%s'", propValue);
 
@@ -100,7 +102,8 @@ public class QueryBuilder {
     protected String getValueClause() {
         try {
             String sSql = "";
-            return valueList.stream().map((value) -> String.format("%s, ", getQuotedValue(value))).reduce(sSql, String::concat).substring(0, sSql.lastIndexOf(", "));
+            sSql = valueList.stream().map((value) -> String.format("%s, ", getQuotedValue(value))).reduce(sSql, String::concat);
+            return sSql.substring(0, sSql.lastIndexOf(", "));
         } catch (Exception ex) {
             throw ex;
         }
@@ -109,7 +112,8 @@ public class QueryBuilder {
     protected String getFieldClause() {
         try {
             String sSql = "";
-            return fieldList.stream().map((field) -> String.format("%s, ", field)).reduce(sSql, String::concat).substring(0, sSql.lastIndexOf(", "));
+            sSql = fieldList.stream().map((field) -> String.format("%s, ", field)).reduce(sSql, String::concat);
+            return sSql.substring(0, sSql.lastIndexOf(", "));
         } catch (Exception ex) {
             throw ex;
         }
@@ -118,7 +122,8 @@ public class QueryBuilder {
     protected String getFromClause() {
         try {
             String sSql = "";
-            return fromList.stream().map((from) -> String.format("%s, ", from)).reduce(sSql, String::concat).substring(0, sSql.lastIndexOf(", "));
+            sSql = fromList.stream().map((from) -> String.format("%s, ", from)).reduce(sSql, String::concat);
+            return sSql.substring(0, sSql.lastIndexOf(", "));
         } catch (Exception ex) {
             throw ex;
         }
@@ -127,7 +132,8 @@ public class QueryBuilder {
     protected String getWhereClause() {
         try {
             String sSql = "";
-            return whereList.stream().map((where) -> String.format("%s AND ", where)).reduce(sSql, String::concat).substring(0, sSql.lastIndexOf(", "));
+            sSql = whereList.stream().map((where) -> String.format("%s AND ", where)).reduce(sSql, String::concat);
+            return sSql.substring(0, sSql.lastIndexOf(" AND "));
         } catch (Exception ex) {
             throw ex;
         }
@@ -136,7 +142,8 @@ public class QueryBuilder {
     protected String getGroupClause() {
         try {
             String sSql = "";
-            return groupList.stream().map((group) -> String.format("%s, ", group)).reduce(sSql, String::concat).substring(0, sSql.lastIndexOf(", "));
+            sSql = groupList.stream().map((group) -> String.format("%s, ", group)).reduce(sSql, String::concat);
+            return sSql.substring(0, sSql.lastIndexOf(", "));
         } catch (Exception ex) {
             throw ex;
         }
@@ -145,7 +152,8 @@ public class QueryBuilder {
     protected String getOrderClause() {
         try {
             String sSql = "";
-            return orderList.stream().map((order) -> String.format("%s, ", order)).reduce(sSql, String::concat).substring(0, sSql.lastIndexOf(", "));
+            sSql = orderList.stream().map((order) -> String.format("%s, ", order)).reduce(sSql, String::concat);
+            return sSql.substring(0, sSql.lastIndexOf(", "));
         } catch (Exception ex) {
             throw ex;
         }
@@ -159,7 +167,7 @@ public class QueryBuilder {
                 sSql += String.format("%s = %s, ", fieldList.get(i), getQuotedValue(valueList.get(i)));
             }
 
-            return sSql;
+            return sSql.substring(0, sSql.lastIndexOf(", "));
         } catch (Exception ex) {
             throw ex;
         }

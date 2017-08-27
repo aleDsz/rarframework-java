@@ -1,5 +1,6 @@
 package br.com.aledsz.rarframework.database.data;
 
+import br.com.aledsz.rarframework.logging.log.LogManager;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -36,7 +37,7 @@ public final class DataContext {
 
     public void connect() throws SQLException, IOException {
         try {
-            if (databaseConnection != null) {
+            if (databaseConnection == null) {
                 databaseConnection = DataContextFactory.getConnection(databaseName);
                 databaseConnection.setAutoCommit(false);
             }
@@ -91,6 +92,8 @@ public final class DataContext {
                 connect();
             }
 
+            LogManager.LogTrace(String.format("Executing SQL: %s", sSql));
+
             Statement statement = databaseConnection.createStatement();
             statement.executeUpdate(sSql);
         } catch (SQLException ex) {
@@ -103,6 +106,8 @@ public final class DataContext {
             if (databaseConnection == null) {
                 connect();
             }
+
+            LogManager.LogTrace(String.format("Executing SQL: %s", sSql));
 
             Statement statement = databaseConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(sSql);

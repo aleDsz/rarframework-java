@@ -5,6 +5,7 @@ import br.com.aledsz.rarframework.database.objects.ObjectContext;
 import br.com.aledsz.rarframework.database.objects.Property;
 import br.com.aledsz.rarframework.database.sql.querybuilder.SelectQueryBuilder;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @description Create SQL Statement for SELECT instruction
@@ -22,14 +23,15 @@ public class SqlStatementSelect<T> extends SqlStatement {
 
     private void createSql(Boolean isList) throws Exception, IllegalAccessException {
         try {
-
             ObjectContext<T> objectContext = new ObjectContext<>(object);
             SelectQueryBuilder selectQueryBuilder = new SelectQueryBuilder();
             List<Property> propsList = objectContext.getProperties(isList);
             List<Property> fieldsList = objectContext.getProperties(true);
 
+            selectQueryBuilder.addFrom(objectContext.getTable());
+
             if (isList) {
-                List<Property> pkList = (List<Property>) propsList.stream().filter(o -> o.primaryKey == true);
+                List<Property> pkList = (List<Property>) propsList.stream().filter(o -> o.primaryKey == true).collect(Collectors.toList());
 
                 if (pkList.isEmpty()) {
                     throw new Exception("Informar pelo menos 1 Primary Key");
@@ -42,7 +44,7 @@ public class SqlStatementSelect<T> extends SqlStatement {
 
             propsList.forEach((property) -> {
                 if (property.value != null) {
-                    selectQueryBuilder.addField(String.format("%s %s", property.fieldName, super.getWhereValue(property.value, property.type)));
+                    selectQueryBuilder.addWhere(String.format("%s %s", property.fieldName, super.getWhereValue(property.value, property.type)));
                 }
             });
 

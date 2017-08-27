@@ -11,10 +11,10 @@ import java.io.IOException;
 public class RarFrameworkException {
 
     public static void LogError(Exception ex) throws IOException {
-        String messageToLog = String.format("Ocorreu um erro na linha %d no arquivo $s\r\n", ex.getStackTrace()[0].getLineNumber(), ex.getStackTrace()[0].getFileName());
+        String messageToLog = String.format("Ocorreu um erro na linha %d no arquivo %s\r\n", ex.getStackTrace()[0].getLineNumber(), ex.getStackTrace()[0].getFileName());
 
         for (StackTraceElement element : ex.getStackTrace()) {
-            messageToLog += String.format("Ocorreu uma exception na linha %d na classe %s na função $s\r\n", element.getLineNumber(), element.getClassName(), element.getMethodName());
+            messageToLog += String.format("Ocorreu uma exception na linha %d na classe %s na função %s\r\n", element.getLineNumber(), element.getClassName(), element.getMethodName());
         }
 
         LogManager.LogTrace(messageToLog);

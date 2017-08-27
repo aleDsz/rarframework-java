@@ -11,7 +11,7 @@ import java.sql.SQLException;
  */
 public class DatabaseFactory {
 
-    private static DataContext _instanceOfDataContext = null;
+    protected static DataContext _instanceOfDataContext = null;
 
     public static DataContext getInstanceOfDataAccess() throws SQLException, IOException {
         try {
