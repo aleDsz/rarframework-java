@@ -1,4 +1,4 @@
-# RAR Framework in Java
+# RAR Framework in Java [![Build Status](https://travis-ci.org/aleDsz/rarframework-java.svg?branch=master)](https://travis-ci.org/aleDsz/rarframework-java)
 
 ## 1. Introdução
 
@@ -6,106 +6,157 @@ Após ter criado o mesmo framework, originalmente em [PHP](https://github.com/al
 
 ## 2. Como Funciona
 
-Através do pacote DBI, é possível realizar uma conexão com vários tipos de banco de dados. Além disso, por meio do `Generics`, é possível acessar o conteúdo de um objeto e obter todas as informações necessárias para criar uma instrução SQL.
+Através do pacote `java.sql`, é possível realizar uma conexão com vários tipos de banco de dados. Além disso, por meio do `Generics`, é possível acessar o conteúdo de um objeto e obter todas as informações necessárias para criar uma instrução SQL.
 
 Neste caso, uma classe deve seguir o seguinte modelo:
 
-```csharp
-ClasseTeste <- methods::setRefClass(
-    
-    # Nome da Tabela
-    "nome_do_campo",
-    
-    # Campos da Tabela
-    fields = list(
-        # Aqui você precisa informar o tipo do
-        # campo no banco de dados, seguindo os tipos de dados do R
-        nome_do_campo = "character"
-    ) 
-)
+```java
+import br.com.aledsz.rarframework.database.objects.DbColumnAttribute;
+import br.com.aledsz.rarframework.database.objects.DbTableAttribute;
+
+@DbTableAttribute(databaseName = "sqlite", tableName = "contacts")
+public class Contact {
+
+    @DbColumnAttribute(fieldName = "id", primaryKey = true, size = 11, type = "Integer")
+    public Integer id;
+
+    @DbColumnAttribute(fieldName = "name", primaryKey = false, size = 120, type = "String")
+    public String name;
+
+    @DbColumnAttribute(fieldName = "email", primaryKey = true, size = 120, type = "String")
+    public String email;
+
+    @DbColumnAttribute(fieldName = "phone", primaryKey = false, size = 30, type = "String")
+    public String phoneNumber;
+}
+
 ```
 
 ## 3. Como Utilizar
 
 Para que você possa utilizar todos as funcionalidades do framework no seu ambiente, você pode criar 1 (ou mais, dependendo da sua forma de trabalho) classe para acessar ao banco de dados de forma genérica.
 
-```csharp
-ModelDataAccess <- methods::setRefClass(
-    "ModelDataAccess",
+```java
 
-    methods = list(
+import br.com.aledsz.rarframework.database.DatabaseFactory;
+import br.com.aledsz.rarframework.database.command.CommandContext;
+import br.com.aledsz.rarframework.database.data.DataContext;
+import br.com.aledsz.rarframework.database.enums.TiposSelect;
+import br.com.aledsz.rarframework.database.objects.ObjectContext;
+import br.com.aledsz.rarframework.database.sql.*;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
-        initialize = function() {
-            tryCatch({
-                databaseFactory <- rarframeworkR:::DatabaseFactory$new()
-                databaseFactory$getDataContextInstance()
-            }, error = function (ex) {
-                stop (ex$message)
-            })
-        },
+public class ModelDataAccess<T> {
 
-        create = function(obj) {
-            tryCatch({
-                sqlStatement   <- rarframeworkR:::SqlStatementInsert$new(obj);
-                commandContext <- rarframeworkR:::CommandContext$new(sqlStatement$getSql());
-                
-                commandContext$executeQuery()
-            }, error = function (ex) {
-                stop (ex$message)
-            })
-        },
-        
-        save = function(obj) {
-            tryCatch({
-                sqlStatement   <- rarframeworkR:::SqlStatementUpdate$new(obj);
-                commandContext <- CrarframeworkR:::ommandContext$new(sqlStatement$getSql());
-                
-                commandContext$executeQuery()
-            }, error = function (ex) {
-                stop (ex$message)
-            })
-        },
-        
-        find = function(obj) {
-            tryCatch({
-                sqlStatement   <- rarframeworkR:::SqlStatementSelect$new(obj);
-                objContext     <- rarframeworkR:::ObjectContext$new(obj);
-                commandContext <- rarframeworkR:::CommandContext$new(sqlStatement$getSql(FALSE));
-                
-                return (objContext$getObject(commandContext$executeReader()))
-            }, error = function (ex) {
-                stop (ex$message)
-            })
-        },
+    public void create(T obj) throws Exception {
+        try {
+            ObjectContext<T> objContext = new ObjectContext<>(obj);
+            DataContext dataContext = DatabaseFactory.getInstanceOfDataAccess(objContext.getDatabase());
+            SqlStatementInsert<T> sqlStatement = new SqlStatementInsert<>(obj);
 
-        findAll = function(obj) {
-            tryCatch({
-                sqlStatement   <- rarframeworkR:::SqlStatementSelect$new(obj);
-                objContext     <- rarframeworkR:::ObjectContext$new(obj);
-                commandContext <- rarframeworkR:::CommandContext$new(sqlStatement$getSql(TRUE));
-                
-                return (objContext$getObjects(commandContext$executeReader()))
-            }, error = function (ex) {
-                stop (ex$message)
-            })
-        },
-        
-        remove = function(obj) {
-            tryCatch({
-                sqlStatement   <- rarframeworkR:::SqlStatementDelete$new(obj);
-                commandContext <- rarframeworkR:::CommandContext$new(sqlStatement$getSql());
-                
-                commandContext$executeQuery()
-            }, error = function (ex) {
-                stop (ex$message)
-            })
+            dataContext.begin();
+
+            CommandContext commandContext = new CommandContext(objContext.getDatabase(), sqlStatement.getSql());
+            commandContext.executeQuery();
+
+            dataContext.commit();
+        } catch (IOException | SQLException ex) {
+            throw ex;
         }
+    }
 
-    )
-)
+    public void save(T obj) throws Exception {
+        try {
+            ObjectContext<T> objContext = new ObjectContext<>(obj);
+            DataContext dataContext = DatabaseFactory.getInstanceOfDataAccess(objContext.getDatabase());
+            SqlStatementUpdate<T> sqlStatement = new SqlStatementUpdate<>(obj);
+
+            dataContext.begin();
+
+            CommandContext commandContext = new CommandContext(objContext.getDatabase(), sqlStatement.getSql());
+            commandContext.executeQuery();
+
+            dataContext.commit();
+        } catch (IOException | SQLException ex) {
+            throw ex;
+        }
+    }
+
+    public void remove(T obj) throws Exception {
+        try {
+            ObjectContext<T> objContext = new ObjectContext<>(obj);
+            DataContext dataContext = DatabaseFactory.getInstanceOfDataAccess(objContext.getDatabase());
+            SqlStatementDelete<T> sqlStatement = new SqlStatementDelete<>(obj);
+
+            dataContext.begin();
+
+            CommandContext commandContext = new CommandContext(objContext.getDatabase(), sqlStatement.getSql());
+            commandContext.executeQuery();
+
+            dataContext.commit();
+        } catch (IOException | SQLException ex) {
+            throw ex;
+        }
+    }
+
+    public T find(T obj) throws Exception {
+        try {
+            T object = null;
+
+            ObjectContext<T> objContext = new ObjectContext<>(obj);
+            DataContext dataContext = DatabaseFactory.getInstanceOfDataAccess(objContext.getDatabase());
+            SqlStatementSelect<T> sqlStatement = new SqlStatementSelect<>(obj);
+
+            dataContext.begin();
+
+            CommandContext commandContext = new CommandContext(objContext.getDatabase(), sqlStatement.getSql(TiposSelect.ByKey));
+            object = objContext.getObject(commandContext.executeReader());
+
+            dataContext.commit();
+
+            return object;
+        } catch (IOException | SQLException ex) {
+            throw ex;
+        }
+    }
+
+    public List<T> findAll(T obj) throws Exception {
+        try {
+            List<T> objects = null;
+
+            ObjectContext<T> objContext = new ObjectContext<>(obj);
+            DataContext dataContext = DatabaseFactory.getInstanceOfDataAccess(objContext.getDatabase());
+            SqlStatementSelect<T> sqlStatement = new SqlStatementSelect<>(obj);
+
+            dataContext.begin();
+
+            CommandContext commandContext = new CommandContext(objContext.getDatabase(), sqlStatement.getSql(TiposSelect.All));
+            objects = objContext.getObjects(commandContext.executeReader());
+
+            dataContext.commit();
+
+            return objects;
+        } catch (IOException | SQLException ex) {
+            throw ex;
+        }
+    }
+}
 ```
 
 **OBS.:** Você não precisa criar a classe de forma genérica, você pode criar uma classe de acesso a dados para cada entidade que você criar no modelo citado acima.
+
+E para que o ORM consiga se conectar com o banco de dados, você precisa criar um arquivo de configuração com o nome: `config.properties` e ele deve seguir o modelo abaixo:
+
+```java
+sqlite.host = localhost
+sqlite.port = 3306
+sqlite.type = mysql
+sqlite.user = root
+sqlite.pwd  = 123
+sqlite.db   = database_test
+```
 
 ## 4. Como Contribuir
 

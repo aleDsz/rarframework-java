@@ -1,3 +1,4 @@
+package br.com.aledsz.rarframework;
 
 import br.com.aledsz.rarframework.database.DatabaseFactory;
 import br.com.aledsz.rarframework.database.command.CommandContext;

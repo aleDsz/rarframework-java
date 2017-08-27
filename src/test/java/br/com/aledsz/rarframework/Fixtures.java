@@ -1,3 +1,4 @@
+package br.com.aledsz.rarframework;
 
 /**
  * @description Create mock data

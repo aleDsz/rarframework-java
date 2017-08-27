@@ -1,3 +1,4 @@
+package br.com.aledsz.rarframework;
 
 import br.com.aledsz.rarframework.database.data.DataContextFactory;
 import br.com.aledsz.rarframework.database.objects.*;
@@ -6,7 +7,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -16,13 +16,13 @@ import org.junit.Test;
  */
 public class RarFrameworkTest {
 
-    @Before
+    @Test
     public void testConnect() throws Throwable {
         Connection databaseConnection = DataContextFactory.getConnection("sqlite");
         Assert.assertNotNull(databaseConnection);
     }
 
-    @Before
+    @Test
     public void testPropertyList() throws Throwable {
         ObjectContext<Contact> objectContext = new ObjectContext<>(new Contact());
         List<Property> listProps = objectContext.getProperties(true);
