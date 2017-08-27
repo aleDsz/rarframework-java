@@ -1,5 +1,6 @@
 
-import br.com.aledsz.rarframework.database.objects.*;
+import br.com.aledsz.rarframework.database.objects.DbColumnAttribute;
+import br.com.aledsz.rarframework.database.objects.DbTableAttribute;
 
 /**
  * @author aleDsz
