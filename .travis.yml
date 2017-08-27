@@ -4,4 +4,8 @@ jdk:
   - oraclejdk7
   - openjdk6
 script:
+<<<<<<< HEAD
   mvn test -B
+=======
+  mvn verify
+>>>>>>> c2ae25be5203ebe783fa02d059faa9205bd94918

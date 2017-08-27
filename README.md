@@ -48,6 +48,12 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+<<<<<<< HEAD
+=======
+/**
+ * @author aleDsz
+ */
+>>>>>>> c2ae25be5203ebe783fa02d059faa9205bd94918
 public class ModelDataAccess<T> {
 
     public void create(T obj) throws Exception {
@@ -98,6 +104,7 @@ public class ModelDataAccess<T> {
             dataContext.commit();
         } catch (IOException | SQLException ex) {
             throw ex;
+<<<<<<< HEAD
         }
     }
 
@@ -122,6 +129,32 @@ public class ModelDataAccess<T> {
         }
     }
 
+=======
+        }
+    }
+
+    public T find(T obj) throws Exception {
+        try {
+            T object = null;
+
+            ObjectContext<T> objContext = new ObjectContext<>(obj);
+            DataContext dataContext = DatabaseFactory.getInstanceOfDataAccess(objContext.getDatabase());
+            SqlStatementSelect<T> sqlStatement = new SqlStatementSelect<>(obj);
+
+            dataContext.begin();
+
+            CommandContext commandContext = new CommandContext(objContext.getDatabase(), sqlStatement.getSql(TiposSelect.ByKey));
+            object = objContext.getObject(commandContext.executeReader());
+
+            dataContext.commit();
+
+            return object;
+        } catch (IOException | SQLException ex) {
+            throw ex;
+        }
+    }
+
+>>>>>>> c2ae25be5203ebe783fa02d059faa9205bd94918
     public List<T> findAll(T obj) throws Exception {
         try {
             List<T> objects = null;
@@ -150,12 +183,21 @@ public class ModelDataAccess<T> {
 E para que o ORM consiga se conectar com o banco de dados, você precisa criar um arquivo de configuração com o nome: `config.properties` e ele deve seguir o modelo abaixo:
 
 ```java
+<<<<<<< HEAD
 sqlite.host = localhost
 sqlite.port = 3306
 sqlite.type = mysql
 sqlite.user = root
 sqlite.pwd  = 123
 sqlite.db   = database_test
+=======
+sqlite.host = data/testDb.db
+sqlite.port = 
+sqlite.type = sqlite
+sqlite.user = 
+sqlite.pwd  = 
+sqlite.db   = 
+>>>>>>> c2ae25be5203ebe783fa02d059faa9205bd94918
 ```
 
 ## 4. Como Contribuir
