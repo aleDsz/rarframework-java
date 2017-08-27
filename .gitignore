@@ -23,3 +23,6 @@ hs_err_pid*
 /nbproject/private/
 /build/
 /dist/
+
+# RAR Framework
+RarFrameworkLog.txt
