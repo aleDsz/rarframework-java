@@ -16,7 +16,7 @@ package br.com.aledsz.rarframework;
 import br.com.aledsz.rarframework.database.objects.DbColumnAttribute;
 import br.com.aledsz.rarframework.database.objects.DbTableAttribute;
 
-@DbTableAttribute(databaseName = "sqlite", tableName = "contacts")
+@DbTableAttribute(databaseName = "mysql", tableName = "contacts")
 public class Contact {
 
     @DbColumnAttribute(fieldName = "id", primaryKey = true, size = 11, type = "Integer")
@@ -157,12 +157,30 @@ public class ModelDataAccess<T> {
 E para que o ORM consiga se conectar com o banco de dados, você precisa criar um arquivo de configuração com o nome: `config.properties` e ele deve seguir o modelo abaixo:
 
 ```java
-sqlite.host = localhost
-sqlite.port = 3306
-sqlite.type = mysql
-sqlite.user = root
-sqlite.pwd  = 123
-sqlite.db   = database_test
+mysql.host = localhost
+mysql.port = 3306
+mysql.type = mysql
+mysql.user = root
+mysql.pwd  = 123
+mysql.db   = database_test
+```
+
+**OBS.:** Através da propriedade `databaseName` da anotação de classe, é possível utilizar inúmeros banco de dados diferentes, assim ele deve ser diferenciado no arquivo `config.properties`. Por exemplo, se você tiver um banco de dados `sqlite` e um `mysql`, seu arquivo deverá estar definido desta forma:
+
+```java
+mysql.host = localhost
+mysql.port = 3306
+mysql.type = mysql
+mysql.user = root
+mysql.pwd  = 123
+mysql.db   = database_test
+
+sqlite.host = data/testDb.db
+sqlite.port = 
+sqlite.type = sqlite
+sqlite.user = 
+sqlite.pwd  = 
+sqlite.db   = 
 ```
 
 ## 4. Como Contribuir
